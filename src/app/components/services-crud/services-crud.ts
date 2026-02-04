@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Service } from '../../models/Service';
 import { Category } from '../../models/Category';
 import { Company } from '../../models/Company';
-import { ServEventosJson } from '../../services/serv.service';
+import { ServServicioApi } from '../../services/serv-servicio-api';
 import { NotificationService } from '../../services/notification.service';
 import { Dialog } from '../../shared/dialog/dialog';
 import { NotificationComponent } from '../../shared/notification/notification';
@@ -17,7 +17,9 @@ declare const bootstrap: any;
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, NgClass, 
-    TitleCasePipe, CurrencyPipe, NotificationComponent
+    TitleCasePipe, 
+    CurrencyPipe, 
+    NotificationComponent 
   ],
   templateUrl: './services-crud.html',
   styleUrls: ['./services-crud.css']
@@ -34,12 +36,11 @@ export class ServicesCrud implements OnInit, AfterViewInit {
   @ViewChild('serviceModalRef') modalElement!: ElementRef;
 
   constructor(
-    private miServicio: ServEventosJson,
+    private miServicio: ServServicioApi,
     private fb: FormBuilder,
     private modalService: NgbModal,
     private notify: NotificationService
   ) {
-    // Sincronizado con nombres de columnas SQL: nombre, descripcion, precio, imagenURL...
     this.formService = this.fb.group({
       nombre: ['', [Validators.required, Validators.maxLength(100)]],
       descripcion: ['', Validators.required],
@@ -63,16 +64,78 @@ export class ServicesCrud implements OnInit, AfterViewInit {
   }
 
   loadData(): void {
-    // Carga paralela de dependencias
-    this.miServicio.getCategories().subscribe(data => this.categories = data);
-    this.miServicio.getCompanies().subscribe(data => this.companies = data);
+    this.miServicio.getCategories().subscribe({
+      next: (data: any) => this.categories = data,
+      error: () => this.notify.show('Error al cargar categorías', 'error')
+    });
+
+    this.miServicio.getCompanies().subscribe({
+      next: (data: any) => this.companies = data,
+      error: () => this.notify.show('Error al cargar empresas', 'error')
+    });
+
     this.miServicio.getServices().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.services = data;
         this.allServices = [...data];
       },
-      error: () => this.notify.show('Error al sincronizar catálogo con SQL', 'error')
+      error: () => this.notify.show('Error de conexión con la base de datos SQL', 'error')
     });
+  }
+
+  save() {
+    if (this.formService.invalid) {
+      this.formService.markAllAsTouched();
+      this.notify.show('Por favor, revisa los campos requeridos', 'error');
+      return;
+    }
+
+    const datos = this.formService.value;
+
+    if (this.editingId) {
+      this.miServicio.updateService({ ...datos, servicioID: this.editingId }).subscribe({
+        next: () => {
+          this.notify.show('Cambios guardados en el servidor', 'success');
+          this.modalRef.hide();
+          this.loadData();
+        },
+        error: (err: any) => this.notify.show(err.error?.message || 'Error al actualizar', 'error')
+      });
+    } else {
+      this.miServicio.createService(datos).subscribe({
+        next: () => {
+          this.notify.show('Nuevo servicio registrado con éxito', 'success');
+          this.modalRef.hide();
+          this.loadData();
+        },
+        error: (err: any) => this.notify.show('No se pudo crear el servicio', 'error')
+      });
+    }
+  }
+
+  delete(service: Service) {
+    const modalRef = this.modalService.open(Dialog, { centered: true });
+    modalRef.componentInstance.data = {
+      title: 'Confirmar Eliminación',
+      message: `¿Estás seguro de que deseas eliminar "${service.nombre}"? Esta acción desactivará el servicio en la base de datos.`
+    };
+
+    modalRef.result.then((result) => {
+      if (result === true && service.servicioID) {
+        this.miServicio.deleteService(service.servicioID).subscribe({
+          next: () => {
+            this.notify.show('Registro desactivado correctamente', 'info');
+            this.loadData();
+          },
+          error: () => this.notify.show('Error al procesar la eliminación', 'error')
+        });
+      }
+    }).catch(() => { });
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const control = this.formService.get(field);
+    return control ? control.invalid && (control.dirty || control.touched) : false;
   }
 
   getCategoryName(id: number): string {
@@ -104,67 +167,7 @@ export class ServicesCrud implements OnInit, AfterViewInit {
     this.modalRef.show();
   }
 
-  save() {
-    if (this.formService.invalid) {
-      this.formService.markAllAsTouched();
-      this.notify.show('Completa los campos obligatorios', 'error');
-      return;
-    }
-
-    const datos = this.formService.value;
-
-    if (this.editingId) {
-      this.miServicio.updateService({ ...datos, servicioID: this.editingId }).subscribe({
-        next: () => {
-          this.notify.show('Servicio actualizado en la base de datos', 'success');
-          this.modalRef.hide();
-          this.loadData();
-        },
-        error: () => this.notify.show('Error al actualizar registro', 'error')
-      });
-    } else {
-      this.miServicio.createService(datos).subscribe({
-        next: () => {
-          this.notify.show('Servicio creado exitosamente', 'success');
-          this.modalRef.hide();
-          this.loadData();
-        },
-        error: () => this.notify.show('Error al crear el servicio', 'error')
-      });
-    }
-  }
-
-  delete(service: Service) {
-    const modalRef = this.modalService.open(Dialog);
-    modalRef.componentInstance.data = {
-      title: 'Eliminar Servicio',
-      message: `¿Estás seguro de eliminar "${service.nombre}"?`
-    };
-
-    modalRef.result.then((result) => {
-      if (result === true && service.servicioID) {
-        this.miServicio.deleteService(service.servicioID).subscribe({
-          next: () => {
-            this.notify.show('Servicio eliminado', 'success');
-            this.loadData();
-          },
-          error: () => this.notify.show('No se pudo eliminar el registro', 'error')
-        });
-      }
-    }).catch(() => { });
-  }
-
   handleImageError(event: any) {
-    event.target.src = 'https://via.placeholder.com/150?text=No+Image';
-  }
-
-  isFieldInvalid(field: string): boolean {
-    const control = this.formService.get(field);
-    return control ? control.invalid && (control.dirty || control.touched) : false;
-  }
-
-  getFieldError(field: string, error: string): boolean {
-    const control = this.formService.get(field);
-    return control ? control.hasError(error) : false;
+    event.target.src = 'https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fes.vecteezy.com%2Farte-vectorial%2F4141669-sin-foto-o-imagen-en-blanco-icono-cargando-imagenes-o-imagen-faltante-marca-imagen-no-disponible-o-imagen-proxima-firmar-simple-naturaleza-silueta-en-marco-ilustracion-vectorial-aislada&ved=0CBYQjRxqFwoTCJj6lMrwwJIDFQAAAAAdAAAAABAH&opi=89978449';
   }
 }

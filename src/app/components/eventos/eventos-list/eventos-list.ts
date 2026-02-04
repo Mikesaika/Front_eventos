@@ -11,6 +11,7 @@ import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
 import { NotificationService } from '../../../services/notification.service';
 import { NotificationComponent } from '../../../shared/notification/notification';
+import { ServServicioApi } from '../../../services/serv-servicio-api';
 
 declare const bootstrap: any;
 
@@ -36,13 +37,13 @@ export class EventoList implements OnInit, AfterViewInit {
   @ViewChild('orderModalRef') modalElement!: ElementRef;
 
   constructor(
-    private eventosService: ServEventosJson,
+    private eventosService: ServServicioApi,
     private orderService: OrderService,
     private userService: UserService,
     private notify: NotificationService,
     private fb: FormBuilder
   ) {
-    // Sincronizado con el modelo Order de SQL
+
     this.formOrder = this.fb.group({
       usuarioID: ['', Validators.required],
       fechaEvento: ['', Validators.required],
@@ -69,7 +70,7 @@ export class EventoList implements OnInit, AfterViewInit {
       next: (servs) => {
         this.services = servs;
         this.cargando = false;
-        this.loadUsers(); // Cargamos usuarios solo después de los servicios
+        this.loadUsers(); 
       },
       error: () => this.notify.show('Error al conectar con el catálogo', 'error')
     });

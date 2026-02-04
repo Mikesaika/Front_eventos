@@ -12,6 +12,7 @@ import { OrderService } from '../../../services/order.service';
 import { UserService } from '../../../services/user.service';
 import { NotificationService } from '../../../services/notification.service';
 import { NotificationComponent } from '../../../shared/notification/notification';
+import { ServServicioApi } from '../../../services/serv-servicio-api';
 
 declare const bootstrap: any;
 
@@ -36,14 +37,13 @@ export class EventoView implements OnInit, AfterViewInit {
   @ViewChild('orderModalRef') modalElement!: ElementRef;
 
   constructor(
-    private eventosService: ServEventosJson,
+    private eventosService: ServServicioApi,
     private orderService: OrderService,
     private userService: UserService,
     private notify: NotificationService,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    // Sincronizado con el modelo Order de SQL
     this.formOrder = this.fb.group({
       usuarioID: ['', Validators.required],
       fechaEvento: ['', Validators.required],
@@ -71,16 +71,12 @@ export class EventoView implements OnInit, AfterViewInit {
 
     this.eventosService.getServiceById(id).subscribe((serv) => {
       this.servicio = serv;
-
-      // Carga relacional con IDs de SQL
       this.eventosService.getCategories().subscribe((cats) => {
         this.categoria = cats.find((c) => Number(c.categoriaID) === Number(this.servicio.categoriaID));
       });
-
       this.eventosService.getCompanies().subscribe((comps) => {
         this.empresa = comps.find((c) => Number(c.empresaID) === Number(this.servicio.empresaID));
       });
-
       this.cargando = false;
     });
   }

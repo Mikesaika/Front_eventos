@@ -1,10 +1,15 @@
 <div class="container mt-4 animate-fade-in">
+  <app-notification></app-notification>
+
   <div class="card border-0 shadow-sm">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <h2 class="fw-bold m-0"><i class="bi bi-gear-fill text-primary me-2"></i>Gestión de Servicios</h2>
+        <h2 class="fw-bold m-0">
+          <i class="bi bi-gear-fill text-primary me-2"></i>Gestión de Servicios
+        </h2>
         <div class="d-flex gap-2">
-          <input type="text" class="form-control" placeholder="Buscar..." (keyup)="search(txtSearch)" #txtSearch>
+          <input type="text" class="form-control" placeholder="Buscar por nombre..." 
+                 (keyup)="search(txtSearch)" #txtSearch>
           <button class="btn btn-primary rounded-pill px-4" (click)="openNew()">
             <i class="bi bi-plus-lg"></i> Nuevo Servicio
           </button>
@@ -25,6 +30,12 @@
             </tr>
           </thead>
           <tbody>
+            <tr *ngIf="services.length === 0">
+              <td colspan="7" class="text-center py-4 text-muted">
+                No se encontraron servicios activos en la base de datos SQL Server.
+              </td>
+            </tr>
+
             <tr *ngFor="let s of services">
               <td>
                 <img [src]="s.imagenURL" 
@@ -32,7 +43,7 @@
                      style="width: 50px; height: 50px; object-fit: cover;"
                      (error)="handleImageError($event)">
               </td>
-              <td class="fw-bold">{{ s.nombre }}</td>
+              <td class="fw-bold">{{ s.nombre | titlecase }}</td>
               <td>{{ getCategoryName(s.categoriaID) }}</td>
               <td><small class="text-muted">{{ getCompanyName(s.empresaID) }}</small></td>
               <td class="fw-bold text-success">{{ s.precio | currency:'USD' }}</td>
@@ -42,8 +53,14 @@
                 </span>
               </td>
               <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary rounded-circle me-1" (click)="openEdit(s)"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="delete(s)"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-sm btn-outline-primary rounded-circle me-1" 
+                        (click)="openEdit(s)" title="Editar">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" 
+                        (click)="delete(s)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -56,63 +73,93 @@
 <div class="modal fade" id="serviceModal" tabindex="-1" #serviceModalRef>
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header bg-morado text-white">
-        <h5 class="modal-title fw-bold">{{ editingId ? 'Editar Servicio' : 'Nuevo Servicio' }}</h5>
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold">
+          {{ editingId ? 'Editar Servicio' : 'Nuevo Servicio' }}
+        </h5>
         <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
       </div>
+      
       <form [formGroup]="formService" (ngSubmit)="save()">
         <div class="modal-body p-4">
           <div class="row g-3">
             <div class="col-md-8">
               <label class="form-label fw-bold">Nombre del Servicio</label>
-              <input type="text" class="form-control" formControlName="nombre" [class.is-invalid]="isFieldInvalid('nombre')">
+              <input type="text" class="form-control" formControlName="nombre" 
+                     [class.is-invalid]="isFieldInvalid('nombre')">
+              <div class="invalid-feedback">El nombre es obligatorio (máx. 100 caracteres).</div>
             </div>
+            
             <div class="col-md-4">
               <label class="form-label fw-bold">Precio</label>
-              <div class="input-group">
+              <div class="input-group has-validation">
                 <span class="input-group-text">$</span>
-                <input type="number" class="form-control" formControlName="precio">
+                <input type="number" class="form-control" formControlName="precio"
+                       [class.is-invalid]="isFieldInvalid('precio')">
+                <div class="invalid-feedback">Ingrese un precio válido (mínimo 0).</div>
               </div>
             </div>
+
             <div class="col-md-6">
               <label class="form-label fw-bold">Categoría</label>
-              <select class="form-select" formControlName="categoriaID">
+              <select class="form-select" formControlName="categoriaID"
+                      [class.is-invalid]="isFieldInvalid('categoriaID')">
                 <option value="">-- Seleccionar --</option>
                 <option *ngFor="let c of categories" [value]="c.categoriaID">{{ c.nombre }}</option>
               </select>
+              <div class="invalid-feedback">Debe seleccionar una categoría.</div>
             </div>
+
             <div class="col-md-6">
               <label class="form-label fw-bold">Empresa</label>
-              <select class="form-select" formControlName="empresaID">
+              <select class="form-select" formControlName="empresaID"
+                      [class.is-invalid]="isFieldInvalid('empresaID')">
                 <option value="">-- Seleccionar --</option>
                 <option *ngFor="let co of companies" [value]="co.empresaID">{{ co.nombre }}</option>
               </select>
+              <div class="invalid-feedback">Debe seleccionar una empresa.</div>
             </div>
+
             <div class="col-md-6">
               <label class="form-label fw-bold">Clasificación</label>
-              <select class="form-select" formControlName="clasificacion">
+              <select class="form-select" formControlName="clasificacion"
+                      [class.is-invalid]="isFieldInvalid('clasificacion')">
+                <option value="">-- Seleccionar --</option>
                 <option value="plata">Plata</option>
                 <option value="oro">Oro</option>
                 <option value="diamante">Diamante</option>
               </select>
+              <div class="invalid-feedback">La clasificación es obligatoria.</div>
             </div>
+
             <div class="col-md-6">
               <label class="form-label fw-bold">URL Imagen</label>
-              <input type="text" class="form-control" formControlName="imagenURL">
+              <input type="text" class="form-control" formControlName="imagenURL"
+                     [class.is-invalid]="isFieldInvalid('imagenURL')">
+              <div class="invalid-feedback">La URL de la imagen es obligatoria.</div>
             </div>
+
             <div class="col-12">
               <label class="form-label fw-bold">Descripción</label>
-              <textarea class="form-control" rows="3" formControlName="descripcion"></textarea>
+              <textarea class="form-control" rows="3" formControlName="descripcion"
+                        [class.is-invalid]="isFieldInvalid('descripcion')"></textarea>
+              <div class="invalid-feedback">Escriba una descripción para el servicio.</div>
             </div>
           </div>
+
           <div class="form-check form-switch mt-3">
             <input class="form-check-input" type="checkbox" formControlName="activo" id="actService">
-            <label class="form-check-label fw-bold" for="actService">Servicio Disponible</label>
+            <label class="form-check-label fw-bold" for="actService">Disponible para el catálogo</label>
           </div>
         </div>
-        <div class="modal-footer border-0">
-          <button type="button" class="btn btn-light rounded-pill px-4" (click)="modalRef.hide()">Cerrar</button>
-          <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar Cambios</button>
+
+        <div class="modal-footer border-0 bg-light">
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="modalRef.hide()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-save me-1"></i> {{ editingId ? 'Guardar Cambios' : 'Crear Servicio' }}
+          </button>
         </div>
       </form>
     </div>

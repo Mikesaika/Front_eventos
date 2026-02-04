@@ -9,7 +9,6 @@ import { NotificationService } from './notification.service';
   providedIn: 'root',
 })
 export class UserService {
-  // Sincronizado con json-server (puerto 5001) y el prefijo de tu API
   private apiUrl = 'http://localhost:5001/api/Usuarios';
 
   constructor(
@@ -28,8 +27,6 @@ export class UserService {
       catchError(error => this.handleError(error, 'Error al obtener datos del usuario'))
     );
   }
-
-  // Usamos Partial<User> para permitir la creación sin ID
   createUser(user: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, user).pipe(
       tap(() => this.notificationService.show('Usuario registrado exitosamente', 'success')),
@@ -38,7 +35,6 @@ export class UserService {
   }
 
   updateUser(id: number | string, user: User): Observable<User> {
-    // Usamos el ID pasado por parámetro para la URL del simulador
     return this.http.put<User>(`${this.apiUrl}/${id}`, user).pipe(
       tap(() => this.notificationService.show('Datos actualizados en SQL', 'success')),
       catchError(error => this.handleError(error, 'Error al actualizar usuario'))
@@ -52,7 +48,6 @@ export class UserService {
     );
   }
 
-  // Manejador de errores centralizado con tu NotificationService
   private handleError(error: HttpErrorResponse, message: string) {
     console.error('API Error:', error);
     this.notificationService.show(message, 'error');

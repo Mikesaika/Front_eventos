@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { NgClass, NgIf } from '@angular/common'; // Directivas críticas para el menú
+import { NgClass, NgIf } from '@angular/common'; 
 
 @Component({
   selector: 'app-root',
