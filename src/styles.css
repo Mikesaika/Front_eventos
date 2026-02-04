@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* --- Configuración Base --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background-color: #f7f3ff; 
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  color: #333;
+}
+
+/* --- Navegación (Navbar) --- */
+.bg-morado {
+  background: linear-gradient(135deg, #5b2a86 0%, #7b3fb4 100%) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #d1b3ff !important;
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  color: #ffffff !important;
+  border-bottom: 2px solid #ffffff; /* Sustituimos underline por borde para que se vea más moderno */
+}
+
+/* --- Dropdowns --- */
+.dropdown-menu {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(91, 42, 134, 0.15);
+  padding: 0.5rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.dropdown-item {
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.dropdown-item:hover {
+  background-color: #f3ebff;
+  color: #5b2a86;
+}
+
+/* --- Contenedor Principal --- */
+.fondo-principal {
+  background-color: #f7f3ff;
+  min-height: calc(100vh - 65px);
+  padding-bottom: 3rem;
+}
+
+/* --- Botones --- */
+.btn-primary {
+  background-color: #5b2a86;
+  border: none;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #4a2270;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(91, 42, 134, 0.3);
+}
+
+/* --- Utilidades --- */
+.pointer {
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Para animar la carga de componentes en el router-outlet */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}

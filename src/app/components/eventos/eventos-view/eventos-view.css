@@ -1,0 +1,102 @@
+.detalle-wrapper {
+  max-width: 950px;
+  margin: 1.8rem auto 0 auto;
+}
+
+.detalle-card {
+  border-radius: 16px;
+  border: 1px solid #e5e0ff;
+  box-shadow: 0 6px 16px rgba(91, 42, 134, 0.18);
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.imagen-detalle {
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 1.6rem;
+}
+
+.detalle-subtitulo {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #7d7d95;
+  margin-bottom: 0.25rem;
+}
+
+.detalle-titulo {
+  color: #5b2a86;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.badge-clasificacion {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background-color: #f2e9ff;
+  color: #5b2a86;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.8rem;
+}
+
+.descripcion-detalle {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.info-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.info-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b84a0;
+}
+
+.info-value {
+  font-size: 0.92rem;
+  color: #3e3553;
+}
+
+.info-value.precio {
+  font-weight: 600;
+}
+
+.contacto-card {
+  border-radius: 10px;
+  background-color: #f7f3ff;
+  padding: 0.75rem 0.9rem;
+}
+
+.contacto-titulo {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #5b2a86;
+  margin-bottom: 0.35rem;
+}
+
+.detalle-cargando {
+  margin-top: 2rem;
+  color: #7d7d95;
+}

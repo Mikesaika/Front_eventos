@@ -1,0 +1,120 @@
+<div class="container mt-4 animate-fade-in">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h2 class="fw-bold m-0"><i class="bi bi-gear-fill text-primary me-2"></i>Gestión de Servicios</h2>
+        <div class="d-flex gap-2">
+          <input type="text" class="form-control" placeholder="Buscar..." (keyup)="search(txtSearch)" #txtSearch>
+          <button class="btn btn-primary rounded-pill px-4" (click)="openNew()">
+            <i class="bi bi-plus-lg"></i> Nuevo Servicio
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Empresa</th>
+              <th>Precio</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of services">
+              <td>
+                <img [src]="s.imagenURL" 
+                     class="rounded shadow-sm" 
+                     style="width: 50px; height: 50px; object-fit: cover;"
+                     (error)="handleImageError($event)">
+              </td>
+              <td class="fw-bold">{{ s.nombre }}</td>
+              <td>{{ getCategoryName(s.categoriaID) }}</td>
+              <td><small class="text-muted">{{ getCompanyName(s.empresaID) }}</small></td>
+              <td class="fw-bold text-success">{{ s.precio | currency:'USD' }}</td>
+              <td class="text-center">
+                <span class="badge rounded-pill" [ngClass]="s.activo ? 'bg-success' : 'bg-secondary'">
+                  {{ s.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary rounded-circle me-1" (click)="openEdit(s)"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="delete(s)"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="serviceModal" tabindex="-1" #serviceModalRef>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-morado text-white">
+        <h5 class="modal-title fw-bold">{{ editingId ? 'Editar Servicio' : 'Nuevo Servicio' }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
+      </div>
+      <form [formGroup]="formService" (ngSubmit)="save()">
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label fw-bold">Nombre del Servicio</label>
+              <input type="text" class="form-control" formControlName="nombre" [class.is-invalid]="isFieldInvalid('nombre')">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Precio</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" formControlName="precio">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Categoría</label>
+              <select class="form-select" formControlName="categoriaID">
+                <option value="">-- Seleccionar --</option>
+                <option *ngFor="let c of categories" [value]="c.categoriaID">{{ c.nombre }}</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Empresa</label>
+              <select class="form-select" formControlName="empresaID">
+                <option value="">-- Seleccionar --</option>
+                <option *ngFor="let co of companies" [value]="co.empresaID">{{ co.nombre }}</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Clasificación</label>
+              <select class="form-select" formControlName="clasificacion">
+                <option value="plata">Plata</option>
+                <option value="oro">Oro</option>
+                <option value="diamante">Diamante</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">URL Imagen</label>
+              <input type="text" class="form-control" formControlName="imagenURL">
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-bold">Descripción</label>
+              <textarea class="form-control" rows="3" formControlName="descripcion"></textarea>
+            </div>
+          </div>
+          <div class="form-check form-switch mt-3">
+            <input class="form-check-input" type="checkbox" formControlName="activo" id="actService">
+            <label class="form-check-label fw-bold" for="actService">Servicio Disponible</label>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light rounded-pill px-4" (click)="modalRef.hide()">Cerrar</button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

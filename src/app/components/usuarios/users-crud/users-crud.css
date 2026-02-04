@@ -1,0 +1,101 @@
+/* Fondo general de la vista de usuarios */
+.usuarios-wrapper {
+  background: #f3f5fb;
+  min-height: 100vh;
+}
+
+/* Card del toolbar */
+.toolbar-card {
+  border-radius: 0.75rem;
+  display: inline-block; /* se ajusta al contenido, no ocupa todo el ancho */
+}
+
+/* Card principal de la tabla */
+.table-card {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+/* Header de la tabla */
+.table-card-header {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  background-color: #c392da98;      /* azul pastel */
+  border-bottom: 1px solid #d4e2ff;
+}
+
+
+.icon-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Estilos de tabla de usuarios */
+.usuarios-table thead {
+  background-color: #f8fafc;
+}
+
+.usuarios-table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6c757d;
+  border-bottom-width: 1px;
+}
+
+.usuarios-table tbody tr td {
+  border-top-color: #edf1f5;
+}
+
+.usuarios-table tbody tr:hover {
+  background-color: #f9fbff;
+}
+
+/* estado (Activo / Inactivo) */
+.estado-pill {
+  font-size: 0.8rem;
+  border-radius: 999px;
+}
+
+
+.custom-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal */
+.modal-content {
+  border-radius: 0.9rem;
+}
+
+/* Header modal,  */
+.modal-header-pastel {
+  background-color:#c392da98;
+  border-bottom: 1px solid #d4e2ff;
+}
+
+.custom-btn {
+  background-color: #c392da98 !important;
+  color: #000 !important;       
+  border: none !important;     
+}
+
+.custom-btn:hover {
+  background-color: #b57ecba8 !important; 
+  color: #000 !important;
+}
+.table-modal-body {
+  overflow-x: auto;
+  max-width: 100%;
+}

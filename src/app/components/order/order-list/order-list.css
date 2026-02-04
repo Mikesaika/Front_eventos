@@ -1,0 +1,136 @@
+    .container {
+    max-width: 1400px;
+    }
+
+    .table th {
+    font-weight: 600;
+    border-top: none;
+    white-space: nowrap;
+    }
+
+    .table td {
+    vertical-align: middle;
+    }
+
+    .card {
+    transition: transform 0.2s ease-in-out;
+    border-radius: 0.5rem;
+    }
+
+    .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .card-body {
+    padding: 1.25rem;
+    }
+
+    .card-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    }
+
+    .badge {
+    font-size: 0.8em;
+    padding: 0.5em 1em;
+    }
+
+    .badge.bg-success {
+    background-color: #198754 !important;
+    }
+
+    .badge.bg-danger {
+    background-color: #dc3545 !important;
+    }
+
+    .alert-light {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    }
+
+    .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    }
+
+    .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1.5rem;
+    }
+    
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    }
+
+    /* Animaciones */
+    .fade {
+    transition: opacity 0.15s linear;
+    }
+
+    .table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+    }
+
+    /* Estilos para los íconos */
+    .bi {
+    vertical-align: -0.125em;
+    }
+
+    /* Mejoras visuales */
+    .table-dark {
+    background-color: #343a40;
+    border-color: #454d55;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    }
+
+    /* Estilos para el buscador */
+    .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Estados */
+    .text-muted {
+    color: #6c757d !important;
+    }
+
+    .fw-bold {
+    font-weight: 700 !important;
+    }
+
+    .fw-semibold {
+    font-weight: 600 !important;
+    }

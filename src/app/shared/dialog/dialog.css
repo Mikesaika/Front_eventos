@@ -1,0 +1,9 @@
+.modal-header {
+  background-color: #5b2a86;
+  color: #fff;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+}

@@ -1,0 +1,115 @@
+.catalogo-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 0 2.5rem 0;
+}
+
+.encabezado {
+  margin-bottom: 1.5rem;
+}
+
+.titulo-pagina {
+  color: #5b2a86;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.subtitulo {
+  color: #6c6c80;
+  font-size: 0.98rem;
+  margin-top: 0.3rem;
+}
+
+.texto-secundario {
+  color: #7d7d95;
+}
+
+.card-servicio {
+  border-radius: 14px;
+  border: 1px solid #e5e0ff;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(91, 42, 134, 0.12);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.card-servicio:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(91, 42, 134, 0.2);
+}
+
+.img-container {
+  position: relative;
+}
+
+.img-servicio {
+  height: 190px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.badge-clasificacion {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.badge-plata {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.badge-oro {
+  background-color: #ffd700;
+  color: #333;
+}
+
+.badge-diamante {
+  background-color: #5b2a86;
+  color: #fff;
+}
+
+.card-body {
+  padding: 0.9rem 1rem 1rem 1rem;
+}
+
+.nombre-servicio {
+  color: #3b235a;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.descripcion {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.categoria,
+.precio {
+  font-size: 0.9rem;
+}
+
+.btn-detalle {
+  border-color: #5b2a86;
+  color: #5b2a86;
+}
+
+.btn-detalle:hover {
+  background-color: #5b2a86;
+  color: #fff;
+}
+
+.btn-pedir {
+  background-color: #7b3fb4;
+  border-color: #7b3fb4;
+}
+
+.btn-pedir:hover {
+  background-color: #5b2a86;
+  border-color: #5b2a86;
+}

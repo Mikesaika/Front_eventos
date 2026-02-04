@@ -1,0 +1,133 @@
+{
+  "services": [
+    {
+      "id": "2",
+      "name": "Buffet Internacional",
+      "description": "Menú de 3 tiempos con opciones de carne y mariscos.",
+      "categoryId": 2,
+      "companyId": 2,
+      "price": 35.5,
+      "image": "https://i.blogs.es/46851f/desayuno-bufet/450_1000.jpg",
+      "classification": "oro",
+      "active": true
+    },
+    {
+      "id": "3",
+      "name": "DJ + Iluminación",
+      "description": "5 horas de música variada con luces robóticas.",
+      "categoryId": 3,
+      "companyId": 3,
+      "price": 400,
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4r80GF3Ue1FEXRSnWZV_kw4K7Kpfb9lEFuw&s",
+      "classification": "plata",
+      "active": true
+    },
+    {
+      "name": "Decoración Floral",
+      "description": "Centros de mesa y arco de entrada.",
+      "categoryId": 4,
+      "companyId": 1,
+      "price": 250,
+      "image": "https://cdn0.matrimonio.com.pe/article-real-wedding/091/3_2/960/jpg/136253.jpeg",
+      "classification": "plata",
+      "active": true,
+      "id": "4"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Comida",
+      "description": "buffets ",
+      "icon": "restaurant",
+      "active": true,
+      "id": "2"
+    },
+    {
+      "name": "Música",
+      "description": "cantantes y sonidistas",
+      "icon": "music_note",
+      "active": true,
+      "id": "3"
+    },
+    {
+      "name": "Decoración",
+      "description": "Globos flores",
+      "icon": "filter_vintage",
+      "active": true,
+      "id": "4"
+    },
+    {
+      "name": "Fotografía",
+      "description": "camarografos y equipos",
+      "icon": "camera_alt",
+      "active": true,
+      "id": "5"
+    },
+    {
+      "id": "973c",
+      "name": "limpieza",
+      "description": "conserjes encargado de la limpieza",
+      "icon": "",
+      "active": true
+    }
+  ],
+  "companies": [
+    {
+      "id": "1",
+      "name": "Eventos Magicos S.A.",
+      "contactEmail": "contacto@eventosmagicos.com",
+      "phone": "0991234567",
+      "city": "Guayaquil",
+      "active": true
+    },
+    {
+      "id": "2",
+      "name": "Banquetes Don Pepe",
+      "contactEmail": "ventas@donpepe.com",
+      "phone": "0997654321",
+      "city": "Quito",
+      "active": true
+    },
+    {
+      "id": "3",
+      "name": "Sound Pro",
+      "contactEmail": "info@soundpro.com",
+      "phone": "0981122334",
+      "city": "Cuenca",
+      "active": true
+    }
+  ],
+  "users": [
+    {
+      "name": "pepe",
+      "email": "ricardo82qq22@outlook.com",
+      "phone": "0997727620",
+      "addres": "DOMINGO NORERO CERRUTI Y PUEBLO VIEJO",
+      "Dateregis": "2026-01-24T03:11:04.690Z",
+      "role": "Cliente",
+      "active": true,
+      "id": "G49S6G-"
+    },
+    {
+      "name": "Maria Lopez",
+      "email": "ricardo82qq22@outlook.com",
+      "phone": "0997727620",
+      "addres": "DOMINGO NORERO CERRUTI Y PUEBLO VIEJO",
+      "Dateregis": "2026-01-24T03:15:51.692Z",
+      "role": "Cliente",
+      "active": true,
+      "id": "fV6aaXm"
+    },
+    {
+      "name": "Maria Lopez",
+      "email": "ricardo82qq22@outlook.com",
+      "phone": "0997727620",
+      "addres": "doce ava y la diez ava",
+      "Dateregis": "2026-01-24T04:03:30.609Z",
+      "role": "Administrador",
+      "active": true,
+      "id": "pFBXBzH"
+    }
+  ],
+  "orders": []
+}

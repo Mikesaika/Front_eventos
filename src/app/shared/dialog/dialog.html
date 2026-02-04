@@ -1,0 +1,17 @@
+<div class="modal-header bg-morado text-white">
+  <h5 class="modal-title fw-bold">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ data?.title }}
+  </h5>
+  <button type="button" class="btn-close btn-close-white" (click)="onNoClick()" aria-label="Close"></button>
+</div>
+<div class="modal-body p-4 text-center">
+  <p class="fs-5">{{ data?.message }}</p>
+</div>
+<div class="modal-footer border-0 d-flex justify-content-center pb-4">
+  <button type="button" class="btn btn-light px-4 rounded-pill fw-bold" (click)="onNoClick()">
+    No, cancelar
+  </button>
+  <button type="button" class="btn btn-danger px-4 rounded-pill fw-bold" (click)="onYesClick()">
+    Sí, continuar
+  </button>
+</div>

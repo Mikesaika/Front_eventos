@@ -1,0 +1,95 @@
+<div class="container mt-4 animate-fade-in">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h2 class="fw-bold text-dark m-0">Gestión de Categorías</h2>
+        
+        <div class="d-flex gap-2">
+          <div class="input-group" style="max-width: 300px;">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control border-start-0" placeholder="Buscar..." (keyup)="search(txtSearch)" #txtSearch>
+          </div>
+          <button class="btn btn-primary rounded-pill px-4" (click)="openNew()">
+            <i class="bi bi-plus-lg me-1"></i> Nueva
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Icono</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of categories">
+              <td><i class="bi fs-5 text-primary" [class]="c.icon || 'bi-tag'"></i></td>
+              <td class="fw-bold">{{ c.nombre }}</td>
+              <td class="text-muted small">{{ c.descripcion }}</td>
+              <td>
+                <span class="badge rounded-pill" [ngClass]="c.activo ? 'bg-success' : 'bg-secondary'">
+                  {{ c.activo ? 'Activa' : 'Inactiva' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary me-2 rounded-circle" (click)="openEdit(c)" title="Editar">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="delete(c)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="categories.length === 0">
+              <td colspan="5" class="text-center py-5 text-muted">No se encontraron categorías registradas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="categoryModal" tabindex="-1" #categoryModalRef>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-morado text-white">
+        <h5 class="modal-title fw-bold">{{ editingId ? 'Editar Categoría' : 'Nueva Categoría' }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
+      </div>
+      <form [formGroup]="formCategory" (ngSubmit)="save()">
+        <div class="modal-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Nombre</label>
+            <input type="text" class="form-control" formControlName="nombre">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Descripción</label>
+            <textarea class="form-control" rows="2" formControlName="descripcion"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Icono (Clase)</label>
+              <input type="text" class="form-control" formControlName="icon">
+            </div>
+            <div class="col-md-6 mb-3 d-flex align-items-end">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" formControlName="activo" id="sw">
+                <label class="form-check-label" for="sw">Activo</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light rounded-pill px-4" (click)="modalRef.hide()">Cancelar</button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

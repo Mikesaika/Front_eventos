@@ -1,0 +1,48 @@
+<div class="table-responsive shadow-sm rounded">
+  <table class="table table-hover align-middle mb-0 bg-white">
+    <thead class="bg-light">
+      <tr>
+        <th *ngFor="let column of columns; let i = index" 
+            (click)="sortData(column)" 
+            class="pointer text-uppercase small fw-bold py-3">
+          {{ displayedHeaders[i] }} <i class="bi bi-arrow-down-up ms-1 opacity-50"></i>
+        </th>
+        <th class="text-center py-3">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of paginatedData">
+        <td *ngFor="let column of columns">
+          <ng-container *ngIf="item[column] === true || item[column] === false; else textData">
+            <span class="badge rounded-pill" [ngClass]="item[column] ? 'bg-success' : 'bg-secondary'">
+              {{ item[column] ? 'Activo' : 'Inactivo' }}
+            </span>
+          </ng-container>
+          <ng-template #textData>{{ item[column] }}</ng-template>
+        </td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-outline-primary me-2" (click)="edit.emit(item)">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" (click)="delete.emit(item)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <small class="text-muted">Página {{currentPage}} de {{totalPages}}</small>
+  <nav>
+    <ul class="pagination pagination-sm mb-0">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link" (click)="onPageChange(currentPage - 1)">Anterior</button>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link" (click)="onPageChange(currentPage + 1)">Siguiente</button>
+      </li>
+    </ul>
+  </nav>
+</div>

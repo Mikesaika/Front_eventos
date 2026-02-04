@@ -1,0 +1,87 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-morado shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" routerLink="/eventos-list" (click)="closeMenu()">
+      <i class="bi bi-calendar2-event-fill me-2"></i>EventosApp
+    </a>
+
+    <button class="navbar-toggler border-0" type="button" (click)="toggleMobileMenu()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" [class.show]="isMobileMenuOpen" id="navbarMain">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/eventos-list" routerLinkActive="active" (click)="closeMenu()">
+            Catálogo
+          </a>
+        </li>
+      
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/services-crud" routerLinkActive="active" (click)="closeMenu()">
+            Servicios
+          </a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" 
+             style="cursor: pointer;"
+             (click)="toggleDropdown('pedidos')"
+             [class.show]="activeMenu === 'pedidos'"
+             routerLinkActive="active">
+            Pedidos
+          </a>
+          <ul class="dropdown-menu shadow border-0" [class.show]="activeMenu === 'pedidos'">
+            <li>
+              <a class="dropdown-item" routerLink="/order-list" (click)="closeMenu()">
+                <i class="bi bi-list-check me-2"></i>Listado General
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/order-crud" (click)="closeMenu()">
+                <i class="bi bi-gear me-2"></i>Gestión (CRUD)
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/usuarios" routerLinkActive="active" (click)="closeMenu()">
+            Usuarios
+          </a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" 
+             style="cursor: pointer;"
+             (click)="toggleDropdown('categorias')"
+             [class.show]="activeMenu === 'categorias'"
+             routerLinkActive="active">
+            Categorías
+          </a>
+          <ul class="dropdown-menu shadow border-0" [class.show]="activeMenu === 'categorias'">
+            <li>
+              <a class="dropdown-item" routerLink="/categories" (click)="closeMenu()">
+                <i class="bi bi-list-ul me-2"></i>Listado General
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/categories-form" (click)="closeMenu()">
+                <i class="bi bi-gear-fill me-2"></i>Gestión (CRUD)
+              </a>
+            </li>
+          </ul>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<main class="fondo-principal py-4">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</main>

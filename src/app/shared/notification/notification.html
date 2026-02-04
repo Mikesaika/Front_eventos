@@ -1,0 +1,21 @@
+<div *ngIf="data" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <div class="toast show align-items-center text-white border-0" 
+       [ngClass]="{
+         'bg-success': data.type === 'success',
+         'bg-danger': data.type === 'error',
+         'bg-info': data.type === 'info'
+       }" 
+       role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body fs-6">
+        <i class="bi" [ngClass]="{
+          'bi-check-circle-fill': data.type === 'success',
+          'bi-exclamation-triangle-fill': data.type === 'error',
+          'bi-info-circle-fill': data.type === 'info'
+        }"></i>
+        &nbsp; {{ data.message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="close()"></button>
+    </div>
+  </div>
+</div>
