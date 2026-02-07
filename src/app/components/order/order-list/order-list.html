@@ -17,30 +17,6 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card h-100 border-0 shadow-sm bg-success text-white">
-        <div class="card-body">
-          <h3 class="fw-bold">{{ getActiveOrdersCount() }}</h3>
-          <p class="mb-0 small opacity-75">Pedidos Vigentes</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card h-100 border-0 shadow-sm bg-danger text-white">
-        <div class="card-body">
-          <h3 class="fw-bold">{{ getInactiveOrdersCount() }}</h3>
-          <p class="mb-0 small opacity-75">Pedidos Cancelados</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card h-100 border-0 shadow-sm bg-morado text-white">
-        <div class="card-body">
-          <h3 class="fw-bold">{{ getTotalRevenue() | currency:'USD' }}</h3>
-          <p class="mb-0 small opacity-75">Recaudación Estimada</p>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="card border-0 shadow-sm">
@@ -57,7 +33,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let o of orders">
+            <tr *ngFor="let o of filteredOrders">
               <td class="ps-4">
                 <div class="fw-bold text-dark">{{ getUserName(o.usuarioID) }}</div>
                 <div class="text-muted x-small">{{ getUserEmail(o.usuarioID) }}</div>
@@ -73,12 +49,18 @@
                 <span class="fw-bold text-success">{{ o.precioTotal | currency:'USD' }}</span>
               </td>
               <td class="text-center">
-                <span class="badge rounded-pill" [ngClass]="o.activo ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
-                  {{ o.activo ? 'Confirmado' : 'Inactivo' }}
+                <span class="badge rounded-pill" 
+                      [ngClass]="{
+                        'bg-warning text-dark': isPending(o),
+                        'bg-success': isApproved(o),
+                        'bg-danger': isCancelled(o),
+                        'bg-info': isFinished(o)
+                      }">
+                  {{ o.estado }}
                 </span>
               </td>
             </tr>
-            <tr *ngIf="orders.length === 0 && !loading">
+            <tr *ngIf="filteredOrders.length === 0 && !loading">
               <td colspan="5" class="text-center py-5">
                 <i class="bi bi-inbox fs-1 text-muted"></i>
                 <p class="text-muted mt-2">No se encontraron registros de pedidos.</p>
