@@ -1,55 +1,74 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Order } from '../models/Order';
+<div class="container mt-4 animate-fade-in">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h2 class="fw-bold m-0 text-dark">Panel de Monitoreo: Pedidos</h2>
+    <div class="input-group" style="max-width: 350px;">
+      <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+      <input type="text" class="form-control border-start-0" placeholder="Filtrar por cliente o servicio..." (keyup)="search(txtSearch)" #txtSearch>
+    </div>
+  </div>
 
-@Injectable({
-    providedIn: 'root'
-})
-export class OrderService {
-    // Sincronizado con el puerto 5001 y el prefijo /api de tu simulación
-    private baseUrl = 'http://localhost:5001/api/Ordenes';
+  <div class="row mb-4" *ngIf="!loading">
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="card h-100 border-0 shadow-sm bg-primary text-white">
+        <div class="card-body">
+          <h3 class="fw-bold">{{ allOrders.length }}</h3>
+          <p class="mb-0 small opacity-75">Total de Solicitudes</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    constructor(private http: HttpClient) { }
-
-    // --- MÉTODOS CRUD ---
-    getOrders(): Observable<Order[]> {
-        return this.http.get<Order[]>(this.baseUrl);
-    }
-
-    getOrderById(id: number | string): Observable<Order> {
-        return this.http.get<Order>(`${this.baseUrl}/${id}`);
-    }
-
-    createOrder(order: Order): Observable<Order> {
-        return this.http.post<Order>(this.baseUrl, order);
-    }
-
-    updateOrder(order: Order): Observable<Order> {
-        // Usamos ordenID que es la PK de SQL Server
-        return this.http.put<Order>(`${this.baseUrl}/${order.ordenID}`, order);
-    }
-
-    deleteOrder(id: number | string): Observable<void> {
-        return this.http.delete<void>(`${this.baseUrl}/${id}`);
-    }
-
-    // --- FILTROS PARA SQL SERVER / JSON-SERVER ---
-    
-    getOrdersByUserId(usuarioID: number): Observable<Order[]> {
-        return this.http.get<Order[]>(`${this.baseUrl}?usuarioID=${usuarioID}`);
-    }
-
-    getOrdersByServiceId(servicioID: number): Observable<Order[]> {
-        return this.http.get<Order[]>(`${this.baseUrl}?servicioID=${servicioID}`);
-    }
-
-    getActiveOrders(): Observable<Order[]> {
-        return this.http.get<Order[]>(`${this.baseUrl}?activo=true`);
-    }
-
-    // Para rangos de fecha en json-server usamos los sufijos _gte y _lte
-    getOrdersByDateRange(startDate: string, endDate: string): Observable<Order[]> {
-        return this.http.get<Order[]>(`${this.baseUrl}?fechaEvento_gte=${startDate}&fechaEvento_lte=${endDate}`);
-    }
-}
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr class="text-muted small text-uppercase">
+              <th class="ps-4">Cliente</th>
+              <th>Servicio Solicitado</th>
+              <th>Fecha del Evento</th>
+              <th>Costo Total</th>
+              <th class="text-center">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let o of filteredOrders">
+              <td class="ps-4">
+                <div class="fw-bold text-dark">{{ getUserName(o.usuarioID) }}</div>
+                <div class="text-muted x-small">{{ getUserEmail(o.usuarioID) }}</div>
+              </td>
+              <td>
+                <div class="fw-semibold">{{ getServiceName(o.servicioID) }}</div>
+                <div class="text-muted small text-truncate" style="max-width: 250px;">{{ getServiceDescription(o.servicioID) }}</div>
+              </td>
+              <td>
+                <span class="text-dark"><i class="bi bi-calendar3 me-2 text-primary"></i>{{ o.fechaEvento | date:'dd/MM/yyyy' }}</span>
+              </td>
+              <td>
+                <span class="fw-bold text-success">{{ o.precioTotal | currency:'USD' }}</span>
+              </td>
+              <td class="text-center">
+                <span class="badge rounded-pill" 
+                      [ngClass]="{
+                        'bg-warning text-dark': isPending(o),
+                        'bg-success': isApproved(o),
+                        'bg-danger': isCancelled(o),
+                        'bg-info': isFinished(o)
+                      }">
+                  {{ o.estado }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="filteredOrders.length === 0 && !loading">
+              <td colspan="5" class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <p class="text-muted mt-2">No se encontraron registros de pedidos.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
