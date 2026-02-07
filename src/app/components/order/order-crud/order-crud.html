@@ -1,16 +1,79 @@
 <div class="container mt-4 animate-fade-in">
+  <app-notification></app-notification>
+
   <div class="card border-0 shadow-sm">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <h2 class="fw-bold m-0"><i class="bi bi-cart-check-fill text-primary me-2"></i>Gestión de Pedidos</h2>
-        <div class="d-flex gap-2">
-          <input type="text" class="form-control" placeholder="Buscar pedido..." (keyup)="search(txtSearch)" #txtSearch>
-          <button class="btn btn-primary rounded-pill px-4" (click)="openNew()">
-            <i class="bi bi-plus-lg"></i> Nuevo Pedido
-          </button>
+        <button class="btn btn-primary rounded-pill px-4" (click)="openNew()">
+          <i class="bi bi-plus-lg"></i> Nuevo Pedido
+        </button>
+      </div>
+
+      <!-- Filtros -->
+      <div class="card bg-light mb-4">
+        <div class="card-body py-3">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label small fw-bold">Buscar</label>
+              <input type="text" class="form-control" placeholder="Cliente o servicio..." [(ngModel)]="searchTerm" (keyup.enter)="searchOrders()">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-bold">Estado</label>
+              <select class="form-select" [(ngModel)]="estadoFilter">
+                <option value="">Todos</option>
+                <option *ngFor="let estado of estadosValidos" [value]="estado">{{ estado }}</option>
+              </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+              <button class="btn btn-primary flex-grow-1" (click)="searchOrders()">
+                <i class="bi bi-search"></i> Buscar
+              </button>
+              <button class="btn btn-outline-secondary" (click)="clearFilters()">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Tarjetas de Estadísticas (CORREGIDAS) -->
+      <div class="row mb-4" *ngIf="allOrders.length > 0">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card h-100 border-0 shadow-sm bg-primary text-white">
+            <div class="card-body">
+              <h3 class="fw-bold">{{ filteredOrders.length }}</h3>
+              <p class="mb-0 small opacity-75">Pedidos en Lista</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card h-100 border-0 shadow-sm bg-success text-white">
+            <div class="card-body">
+              <h3 class="fw-bold">{{ stats.activeCount }}</h3>
+              <p class="mb-0 small opacity-75">Pedidos Activos</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card h-100 border-0 shadow-sm bg-warning text-dark">
+            <div class="card-body">
+              <h3 class="fw-bold">{{ stats.pendingCount }}</h3>
+              <p class="mb-0 small opacity-75">Pendientes</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <div class="card h-100 border-0 shadow-sm bg-info text-white">
+            <div class="card-body">
+              <h3 class="fw-bold">{{ stats.estimatedIncome | currency:'USD' }}</h3>
+              <p class="mb-0 small opacity-75">Ingreso Estimado</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Pedidos -->
       <div class="table-responsive">
         <table class="table table-hover align-middle">
           <thead class="table-light">
@@ -24,22 +87,31 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let o of orders">
+            <tr *ngFor="let o of filteredOrders">
               <td>
                 <div class="fw-bold">{{ getUserName(o.usuarioID) }}</div>
-                <small class="text-muted">ID: {{ o.usuarioID }}</small>
+                <small class="text-muted">{{ getUserEmail(o.usuarioID) }}</small>
               </td>
               <td>{{ getServiceName(o.servicioID) }}</td>
-              <td><i class="bi bi-calendar-event me-2"></i>{{ o.fechaEvento | date:'dd/MM/yyyy' }}</td>
+              <td>{{ o.fechaEvento | date:'dd/MM/yyyy' }}</td>
               <td class="fw-bold text-success">{{ o.precioTotal | currency:'USD' }}</td>
               <td>
-                <span class="badge rounded-pill" [ngClass]="o.activo ? 'bg-success' : 'bg-danger'">
-                  {{ o.activo ? 'Activo' : 'Inactivo' }}
+                <span class="badge rounded-pill" 
+                      [ngClass]="{
+                        'bg-warning text-dark': isPending(o),
+                        'bg-success': isApproved(o),
+                        'bg-danger': isCancelled(o),
+                        'bg-info': isFinished(o)
+                      }">
+                  {{ o.estado }}
                 </span>
               </td>
               <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary rounded-circle me-2" (click)="openEdit(o)"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="delete(o)"><i class="bi bi-trash"></i></button>
+                <div class="btn-group">
+                  <button class="btn btn-sm btn-outline-primary" (click)="openEdit(o)"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-warning" (click)="cancelOrder(o)" *ngIf="isActive(o)"><i class="bi bi-x-circle"></i></button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="delete(o)"><i class="bi bi-trash"></i></button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -49,11 +121,12 @@
   </div>
 </div>
 
+<!-- Modal -->
 <div class="modal fade" id="orderModal" tabindex="-1" #orderModalRef>
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header bg-morado text-white">
-        <h5 class="modal-title fw-bold">{{ editingId ? 'Actualizar Pedido' : 'Registrar Nuevo Pedido' }}</h5>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">{{ editingId ? 'Editar Pedido' : 'Nuevo Pedido' }}</h5>
         <button type="button" class="btn-close btn-close-white" (click)="modalRef.hide()"></button>
       </div>
       <form [formGroup]="formOrder" (ngSubmit)="save()">
@@ -62,37 +135,28 @@
             <div class="col-md-6">
               <label class="form-label fw-bold">Cliente</label>
               <select class="form-select" formControlName="usuarioID">
-                <option value="">-- Seleccionar --</option>
                 <option *ngFor="let u of users" [value]="u.usuarioID">{{ u.nombre }}</option>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-bold">Servicio</label>
               <select class="form-select" formControlName="servicioID" (change)="onServiceChange()">
-                <option value="">-- Seleccionar --</option>
                 <option *ngFor="let s of services" [value]="s.servicioID">{{ s.nombre }}</option>
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-bold">Fecha del Evento</label>
+              <label class="form-label fw-bold">Fecha Evento</label>
               <input type="date" class="form-control" formControlName="fechaEvento">
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-bold">Total a Cobrar</label>
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" formControlName="precioTotal">
-              </div>
+              <label class="form-label fw-bold">Precio Total</label>
+              <input type="number" class="form-control" formControlName="precioTotal">
             </div>
           </div>
-          <div class="form-check form-switch mt-4">
-            <input class="form-check-input" type="checkbox" formControlName="activo" id="act">
-            <label class="form-check-label fw-bold" for="act">Pedido Vigente</label>
-          </div>
         </div>
-        <div class="modal-footer border-0">
-          <button type="button" class="btn btn-light rounded-pill px-4" (click)="modalRef.hide()">Cancelar</button>
-          <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar Cambios</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" (click)="modalRef.hide()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
     </div>
