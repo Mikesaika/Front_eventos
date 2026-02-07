@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf, NgClass, CurrencyPipe, DatePipe, CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { Order } from '../../../models/Order';
+
+import { Order, isActive, isPending, isApproved, isFinished, isCancelled } from '../../../models/Order';
 import { User } from '../../../models/User';
 import { Service } from '../../../models/Service';
 import { OrderService } from '../../../services/order.service';
@@ -22,6 +23,7 @@ import { NotificationComponent } from '../../../shared/notification/notification
 export class OrderList implements OnInit {
   orders: Order[] = [];
   allOrders: Order[] = [];
+  filteredOrders: Order[] = [];
   users: User[] = [];
   services: Service[] = [];
   loading: boolean = true;
@@ -48,6 +50,7 @@ export class OrderList implements OnInit {
         this.services = response.services;
         this.orders = response.orders;
         this.allOrders = [...response.orders];
+        this.filteredOrders = [...response.orders];
         this.loading = false;
       },
       error: () => {
@@ -79,27 +82,36 @@ export class OrderList implements OnInit {
   search(input: HTMLInputElement) {
     const term = input.value.toLowerCase().trim();
     if (!term) {
-      this.orders = [...this.allOrders];
+      this.filteredOrders = [...this.orders];
       return;
     }
-    this.orders = this.allOrders.filter(o =>
+    this.filteredOrders = this.orders.filter(o =>
       this.getUserName(o.usuarioID).toLowerCase().includes(term) ||
       this.getServiceName(o.servicioID).toLowerCase().includes(term) ||
+      (o.observaciones && o.observaciones.toLowerCase().includes(term)) ||
       o.precioTotal.toString().includes(term)
     );
   }
 
-  getActiveOrdersCount(): number {
-    return this.allOrders.filter(o => o.activo).length;
+  // Métodos para verificar el estado de los pedidos
+  isActive(order: Order): boolean {
+    return isActive(order);
   }
 
-  getInactiveOrdersCount(): number {
-    return this.allOrders.filter(o => !o.activo).length;
+  isPending(order: Order): boolean {
+    return isPending(order);
   }
 
-  getTotalRevenue(): number {
-    return this.allOrders
-      .filter(o => o.activo)
-      .reduce((sum, o) => sum + o.precioTotal, 0);
+  isApproved(order: Order): boolean {
+    return isApproved(order);
   }
+
+  isFinished(order: Order): boolean {
+    return isFinished(order);
+  }
+
+  isCancelled(order: Order): boolean {
+    return isCancelled(order);
+  }
+
 }
