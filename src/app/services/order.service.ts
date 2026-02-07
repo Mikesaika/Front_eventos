@@ -1,74 +1,98 @@
-<div class="container mt-4 animate-fade-in">
-  
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h2 class="fw-bold m-0 text-dark">Panel de Monitoreo: Pedidos</h2>
-    <div class="input-group" style="max-width: 350px;">
-      <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
-      <input type="text" class="form-control border-start-0" placeholder="Filtrar por cliente o servicio..." (keyup)="search(txtSearch)" #txtSearch>
-    </div>
-  </div>
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Order } from '../models/Order';
 
-  <div class="row mb-4" *ngIf="!loading">
-    <div class="col-md-3 col-sm-6 mb-3">
-      <div class="card h-100 border-0 shadow-sm bg-primary text-white">
-        <div class="card-body">
-          <h3 class="fw-bold">{{ allOrders.length }}</h3>
-          <p class="mb-0 small opacity-75">Total de Solicitudes</p>
-        </div>
-      </div>
-    </div>
-  </div>
+@Injectable({
+    providedIn: 'root'
+})
+export class OrderService {
+    private baseUrl = 'http://localhost:5041/api/Ordenes';
 
-  <div class="card border-0 shadow-sm">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="bg-light">
-            <tr class="text-muted small text-uppercase">
-              <th class="ps-4">Cliente</th>
-              <th>Servicio Solicitado</th>
-              <th>Fecha del Evento</th>
-              <th>Costo Total</th>
-              <th class="text-center">Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let o of filteredOrders">
-              <td class="ps-4">
-                <div class="fw-bold text-dark">{{ getUserName(o.usuarioID) }}</div>
-                <div class="text-muted x-small">{{ getUserEmail(o.usuarioID) }}</div>
-              </td>
-              <td>
-                <div class="fw-semibold">{{ getServiceName(o.servicioID) }}</div>
-                <div class="text-muted small text-truncate" style="max-width: 250px;">{{ getServiceDescription(o.servicioID) }}</div>
-              </td>
-              <td>
-                <span class="text-dark"><i class="bi bi-calendar3 me-2 text-primary"></i>{{ o.fechaEvento | date:'dd/MM/yyyy' }}</span>
-              </td>
-              <td>
-                <span class="fw-bold text-success">{{ o.precioTotal | currency:'USD' }}</span>
-              </td>
-              <td class="text-center">
-                <span class="badge rounded-pill" 
-                      [ngClass]="{
-                        'bg-warning text-dark': isPending(o),
-                        'bg-success': isApproved(o),
-                        'bg-danger': isCancelled(o),
-                        'bg-info': isFinished(o)
-                      }">
-                  {{ o.estado }}
-                </span>
-              </td>
-            </tr>
-            <tr *ngIf="filteredOrders.length === 0 && !loading">
-              <td colspan="5" class="text-center py-5">
-                <i class="bi bi-inbox fs-1 text-muted"></i>
-                <p class="text-muted mt-2">No se encontraron registros de pedidos.</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+    constructor(private http: HttpClient) { }
+
+    // Obtener todas las órdenes activas (no canceladas)
+    getOrders(): Observable<Order[]> {
+        return this.http.get<Order[]>(this.baseUrl);
+    }
+
+    // Obtener orden por ID
+    getOrderById(id: number | string): Observable<Order> {
+        return this.http.get<Order>(`${this.baseUrl}/${id}`);
+    }
+
+    // Crear nueva orden
+    createOrder(order: Order): Observable<Order> {
+        return this.http.post<Order>(this.baseUrl, order);
+    }
+
+    // Actualizar orden existente
+    updateOrder(order: Order): Observable<Order> {
+        return this.http.put<Order>(`${this.baseUrl}/${order.ordenID}`, order);
+    }
+
+    // Eliminar orden (eliminación física - solo administradores)
+    deleteOrder(id: number | string): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    }
+
+    // Cancelar orden (eliminación lógica - cambia estado a "Cancelado")
+    cancelOrder(id: number | string): Observable<void> {
+        return this.http.put<void>(`${this.baseUrl}/cancel/${id}`, {});
+    }
+
+    // Buscar órdenes con múltiples filtros
+    searchOrders(
+        search?: string, 
+        usuarioID?: number, 
+        servicioID?: number, 
+        estado?: string,
+        fechaInicio?: string,
+        fechaFin?: string
+    ): Observable<Order[]> {
+        let params = new HttpParams();
+        
+        if (search) {
+            params = params.set('search', search);
+        }
+        if (usuarioID) {
+            params = params.set('usuarioID', usuarioID.toString());
+        }
+        if (servicioID) {
+            params = params.set('servicioID', servicioID.toString());
+        }
+        if (estado) {
+            params = params.set('estado', estado);
+        }
+        if (fechaInicio) {
+            params = params.set('fechaInicio', fechaInicio);
+        }
+        if (fechaFin) {
+            params = params.set('fechaFin', fechaFin);
+        }
+
+        return this.http.get<Order[]>(`${this.baseUrl}/search`, { params });
+    }
+
+    // Obtener órdenes de un usuario específico
+    getOrdersByUserId(usuarioID: number): Observable<Order[]> {
+        return this.http.get<Order[]>(`${this.baseUrl}/byuser/${usuarioID}`);
+    }
+
+    // Obtener órdenes de un servicio específico
+    getOrdersByServiceId(servicioID: number): Observable<Order[]> {
+        return this.http.get<Order[]>(`${this.baseUrl}/byservice/${servicioID}`);
+    }
+
+    // Actualizar estado de una orden
+    updateOrderStatus(id: number, estado: string): Observable<void> {
+        return this.http.put<void>(`${this.baseUrl}/updatestatus/${id}`, { estado });
+    }
+
+    // Obtener estadísticas de órdenes (solo administradores)
+    getStatistics(): Observable<any> {
+        return this.http.get(`${this.baseUrl}/statistics`);
+    }
+}
+
+
