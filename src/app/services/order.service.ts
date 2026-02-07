@@ -7,6 +7,7 @@ import { Order } from '../models/Order';
     providedIn: 'root'
 })
 export class OrderService {
+    // Verificar el puerto con el backend
     private baseUrl = 'http://localhost:5041/api/Ordenes';
 
     constructor(private http: HttpClient) { }
